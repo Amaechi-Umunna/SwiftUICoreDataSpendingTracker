@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 struct MainView: View {
     
     @State private var shouldPresentAddCardForm = false
@@ -26,16 +27,14 @@ struct MainView: View {
                 .indexViewStyle(.page(backgroundDisplayMode: .always))
                 
                 // Hack
-//                .onAppear {
-//                    shouldPresentAddCardForm.toggle()
-//                }
+                //                .onAppear {
+                //                    shouldPresentAddCardForm.toggle()
+                //                }
                 
                 Spacer()
                     .fullScreenCover(isPresented: $shouldPresentAddCardForm) {
-                        NavigationView {
-                            Text("Add card form")
-                                .navigationTitle("Add Credit Card")
-                        }
+                        AddCardForm()
+
                     }
                 
             }
@@ -64,6 +63,7 @@ struct MainView: View {
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
         MainView()
+//        AddCardForm()
     }
 }
 
