@@ -12,37 +12,93 @@ struct MainView: View {
     
     @State private var shouldPresentAddCardForm = false
     
+    // Amount of credit card variable
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \Card.timestamp, ascending: true)],
+        animation: .default)
+    private var cards: FetchedResults<Card>
+    
     var body: some View {
         NavigationView {
             ScrollView {
-                
-                TabView {
-                    ForEach(0..<5) { num in
-                        CreditCardView()
-                            .padding(.bottom, 50)
+                if !cards.isEmpty {
+                    TabView {
+                        ForEach(cards) { card in
+                            CreditCardView(card: card)
+                                .padding(.bottom, 50)
+                        }
                     }
+                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
+                    .frame(height: 280)
+                    .indexViewStyle(.page(backgroundDisplayMode: .always))
+                    
+                    // Hack
+                    //                .onAppear {
+                    //                    shouldPresentAddCardForm.toggle()
+                    //                }
                 }
-                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
-                .frame(height: 280)
-                .indexViewStyle(.page(backgroundDisplayMode: .always))
                 
-                // Hack
-                //                .onAppear {
-                //                    shouldPresentAddCardForm.toggle()
-                //                }
                 
                 Spacer()
                     .fullScreenCover(isPresented: $shouldPresentAddCardForm) {
                         AddCardForm()
-
+                        
                     }
                 
             }
             .navigationTitle("Credit Cards")
-            .navigationBarItems(trailing: addCardButton)
+            //            .navigationBarItems(trailing: addCardButton)
+            .navigationBarItems(leading: HStack {
+                addItemButton
+                deleteAllButton
+            },
+                                trailing: addCardButton)
+            
         }
     }
     
+    
+    // MARK: Delete All Button
+    private var deleteAllButton: some View {
+        Button  {
+            cards.forEach { card in
+                viewContext.delete(card
+                )
+            }
+            
+            do {
+                try viewContext.save()
+            } catch {
+                
+            }
+            
+            
+        } label: {
+            Text("Delete All")
+        }
+    }
+    // MARK: Add item button
+    var addItemButton: some View {
+        Button (action: {
+            withAnimation {
+                let viewContext = PersistenceController.shared.container.viewContext
+                let card = Card(context: viewContext)
+                
+                card.timestamp = Date()
+                
+                do {
+                    try viewContext.save()
+                } catch {
+                    let nsError = error as NSError
+                    fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+                }
+            }
+        }, label: {
+            Text("Add Item")
+        })
+    }
     
     // MARK: Add Card
     var addCardButton: some View {
@@ -62,17 +118,23 @@ struct MainView: View {
 
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
+        let viewContext = PersistenceController.shared.container.viewContext
         MainView()
-//        AddCardForm()
+            .environment(\.managedObjectContext, viewContext)
+        //        AddCardForm()
     }
 }
 
 
 // MARK: Credit Card Nav
 struct CreditCardView: View {
+    
+    let card: Card
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Apple Blue Visa Card")
+            
+            Text(card.name ?? "")
                 .font(.system(size: 24, weight: .semibold))
             
             
@@ -91,18 +153,32 @@ struct CreditCardView: View {
             }
             
             
-            Text("1234 1234 1234 1234")
+            Text(card.number ?? "")
             
-            Text("Credit Limit: $50,000")
+            Text("Credit Limit: $\(card.limit)")
             
             HStack { Spacer() }
         }
         .foregroundColor(.white)
         .padding()
         .background(
-            LinearGradient(colors: [
-                Color.blue.opacity(0.6), Color.blue
-            ], startPoint: .top, endPoint: .bottom)
+            
+            VStack {
+                
+                if let colorData = card.color,
+                   let uiColor = UIColor.color(data: colorData),
+                   let actualColor = Color(uiColor) {
+                    LinearGradient(colors: [
+                        actualColor.opacity(0.6),
+                        actualColor
+                    ], startPoint: .top, endPoint: .bottom)
+                } else {
+                    Color.purple
+                }
+                
+                
+                
+            }
         )
         .overlay(RoundedRectangle(cornerRadius: 8)
             .stroke(Color.black.opacity(0.5), lineWidth: 1)
