@@ -11,18 +11,20 @@ import SwiftUI
 struct MainView: View {
     
     @State private var shouldPresentAddCardForm = false
+    @State private var shouldShowAddTransactionForm = false
     
     // Amount of credit card variable
     @Environment(\.managedObjectContext) private var viewContext
     
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Card.timestamp, ascending: true)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \Card.timestamp, ascending: false)],
         animation: .default)
     private var cards: FetchedResults<Card>
     
     var body: some View {
         NavigationView {
             ScrollView {
+                
                 if !cards.isEmpty {
                     TabView {
                         ForEach(cards) { card in
@@ -34,15 +36,29 @@ struct MainView: View {
                     .frame(height: 280)
                     .indexViewStyle(.page(backgroundDisplayMode: .always))
                     
-                    // Hack
-                    //                .onAppear {
-                    //                    shouldPresentAddCardForm.toggle()
-                    //                }
+                Text("Get Started by adding your first transaction")
+                    
+                    Button {
+                        shouldShowAddTransactionForm.toggle()
+                    } label: {
+                        Text("+ Transaction")
+                            .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 14))
+                            .background(Color.black)
+                            .foregroundColor(Color(.systemBackground))
+                            .font(.headline)
+                            .cornerRadius(5)
+                    }
+                    .fullScreenCover(isPresented: $shouldShowAddTransactionForm) {
+                        AddTransactionForm()
+                    }
+
+                } else {
+                    emptyPromptMessage
+                    
                 }
                 
-                
                 Spacer()
-                    .fullScreenCover(isPresented: $shouldPresentAddCardForm) {
+                    .fullScreenCover(isPresented: $shouldPresentAddCardForm, onDismiss: nil) {
                         AddCardForm()
                         
                     }
@@ -57,6 +73,29 @@ struct MainView: View {
                                 trailing: addCardButton)
             
         }
+    }
+    
+    // MARK: Empty Card Return Message
+    private var emptyPromptMessage: some View {
+        // MARK: In the case of no cards at first
+        VStack {
+            Text("You currently have no cards in the system. ")
+                .padding(.horizontal, 48)
+                .padding(.vertical)
+                .multilineTextAlignment(.center)
+            
+            Button {
+                shouldPresentAddCardForm.toggle()
+            } label: {
+                Text("+ Add Your First Card")
+                    .foregroundColor(Color(.systemBackground))
+            }
+            .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 14))
+            .background(Color(.label))
+            .cornerRadius(5)
+            
+        }
+        .font(.system(size: 22, weight: .semibold))
     }
     
     
@@ -131,11 +170,49 @@ struct CreditCardView: View {
     
     let card: Card
     
-    var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+    @State private var shouldShowActionSheet = false
+    @State private var shouldShowEditForm = false
+    @State var refreshId = UUID()
+    
+    // MARK: Function for Delete
+    private func handleDelete() {
+        let viewContext = PersistenceController.shared.container.viewContext
+        
+        viewContext.delete(card)
+        
+        
+        do {
+            try viewContext.save()
             
-            Text(card.name ?? "")
-                .font(.system(size: 24, weight: .semibold))
+        } catch {
+            // error handling
+        }
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            
+            // MARK: Delete Card Action Sheet
+            HStack {
+                Text(card.name ?? "")
+                    .font(.system(size: 24, weight: .semibold))
+                Spacer()
+                
+                Button {
+                    shouldShowActionSheet.toggle()
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 28, weight: .bold))
+                }
+                .actionSheet(isPresented: $shouldShowActionSheet) {
+                    .init(title: Text(self.card.name  ?? ""), message:
+                            Text("Options"), buttons: [
+                                .default(Text("Edit"), action: {
+                                    shouldShowEditForm.toggle()
+                                }),
+                                .destructive(Text("Delete Card"), action: handleDelete), .cancel()])
+                }
+                            }
             
             
             HStack {
@@ -155,7 +232,14 @@ struct CreditCardView: View {
             
             Text(card.number ?? "")
             
-            Text("Credit Limit: $\(card.limit)")
+            HStack {
+                Text("Credit Limit: $\(card.limit)")
+                Spacer()
+                VStack(alignment: .trailing) {
+                    Text("Valid Thru")
+                    Text("\(String(format: "%02d", card.expMonth + 1))/\(String(card.expYear % 2000))")
+                }
+            }
             
             HStack { Spacer() }
         }
@@ -175,9 +259,6 @@ struct CreditCardView: View {
                 } else {
                     Color.purple
                 }
-                
-                
-                
             }
         )
         .overlay(RoundedRectangle(cornerRadius: 8)
@@ -188,5 +269,9 @@ struct CreditCardView: View {
         .shadow(radius: 5)
         .padding(.horizontal)
         .padding(.top, 8)
+        
+        .fullScreenCover(isPresented: $shouldShowEditForm) {
+            AddCardForm(card: self.card)
+        }
     }
 }

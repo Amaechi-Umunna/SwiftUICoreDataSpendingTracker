@@ -15,6 +15,7 @@
 		586008342941BE4600BCA7F7 /* SwiftUICoreDataSpendingTracker.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 586008322941BE4600BCA7F7 /* SwiftUICoreDataSpendingTracker.xcdatamodeld */; };
 		5860083C2941BF6700BCA7F7 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5860083B2941BF6700BCA7F7 /* MainView.swift */; };
 		5860083F2941FD2200BCA7F7 /* AddCardForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5860083E2941FD2200BCA7F7 /* AddCardForm.swift */; };
+		58D2FD8F295FE499006A565C /* AddTransactionForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58D2FD8E295FE499006A565C /* AddTransactionForm.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +28,7 @@
 		586008332941BE4600BCA7F7 /* SwiftUICoreDataSpendingTracker.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SwiftUICoreDataSpendingTracker.xcdatamodel; sourceTree = "<group>"; };
 		5860083B2941BF6700BCA7F7 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		5860083E2941FD2200BCA7F7 /* AddCardForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCardForm.swift; sourceTree = "<group>"; };
+		58D2FD8E295FE499006A565C /* AddTransactionForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTransactionForm.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +83,7 @@
 		5860083A2941BF4F00BCA7F7 /* Main */ = {
 			isa = PBXGroup;
 			children = (
+				58D2FD8D295FE470006A565C /* Transaction */,
 				5860083D2941FD0C00BCA7F7 /* AddCard */,
 				5860083B2941BF6700BCA7F7 /* MainView.swift */,
 			);
@@ -93,6 +96,14 @@
 				5860083E2941FD2200BCA7F7 /* AddCardForm.swift */,
 			);
 			path = AddCard;
+			sourceTree = "<group>";
+		};
+		58D2FD8D295FE470006A565C /* Transaction */ = {
+			isa = PBXGroup;
+			children = (
+				58D2FD8E295FE499006A565C /* AddTransactionForm.swift */,
+			);
+			path = Transaction;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -168,6 +179,7 @@
 				586008312941BE4600BCA7F7 /* Persistence.swift in Sources */,
 				586008342941BE4600BCA7F7 /* SwiftUICoreDataSpendingTracker.xcdatamodeld in Sources */,
 				5860083F2941FD2200BCA7F7 /* AddCardForm.swift in Sources */,
+				58D2FD8F295FE499006A565C /* AddTransactionForm.swift in Sources */,
 				5860082A2941BE4400BCA7F7 /* ContentView.swift in Sources */,
 				5860083C2941BF6700BCA7F7 /* MainView.swift in Sources */,
 				586008282941BE4400BCA7F7 /* SwiftUICoreDataSpendingTrackerApp.swift in Sources */,
