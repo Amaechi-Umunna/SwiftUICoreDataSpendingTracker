@@ -21,6 +21,11 @@ struct MainView: View {
         animation: .default)
     private var cards: FetchedResults<Card>
     
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \CardTransaction.timestamp, ascending: false)],
+        animation: .default)
+    private var transactions: FetchedResults<CardTransaction>
+    
     var body: some View {
         NavigationView {
             ScrollView {
@@ -36,7 +41,7 @@ struct MainView: View {
                     .frame(height: 280)
                     .indexViewStyle(.page(backgroundDisplayMode: .always))
                     
-                Text("Get Started by adding your first transaction")
+                    Text("Get Started by adding your first transaction")
                     
                     Button {
                         shouldShowAddTransactionForm.toggle()
@@ -51,7 +56,48 @@ struct MainView: View {
                     .fullScreenCover(isPresented: $shouldShowAddTransactionForm) {
                         AddTransactionForm()
                     }
-
+                    ForEach(transactions) { transaction in
+                        
+                        VStack {
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text(transaction.name ?? "")
+                                        .font(.headline)
+                                    if let date = transaction.timestamp {
+                                        Text(dateFormatter.string(from: date))
+                                    }
+                                    
+                                }
+                                Spacer()
+                                
+                                VStack(alignment: .trailing) {
+                                    Button  {
+                                        
+                                    } label: {
+                                        Image(systemName: "ellipsis")
+                                            .font(.system(size: 24))
+                                        
+                                    }.padding(EdgeInsets(top: 6, leading: 8, bottom: 4, trailing: 0))
+                                    
+                                    Text(String(format: "$%.2f",transaction.amount )) // Took off nil coalescing here *for future reference
+                                }
+                            }
+                            if let photoData = transaction.photoData,
+                               let uiImage = UIImage(data: photoData) {
+                                Image(uiImage: uiImage)
+                                    .resizable()
+                                    .scaledToFill()
+                            }
+                            
+                        }
+                        .foregroundColor(Color(.label))
+                        .padding()
+                        .background(Color.white)
+                        .cornerRadius(5)
+                        .shadow(radius: 5)
+                        .padding()
+                    }
+                    
                 } else {
                     emptyPromptMessage
                     
@@ -74,6 +120,15 @@ struct MainView: View {
             
         }
     }
+    
+    // MARK: Date Formatter
+    
+    private let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        formatter.timeStyle = .none
+        return formatter
+    }()
     
     // MARK: Empty Card Return Message
     private var emptyPromptMessage: some View {
@@ -155,16 +210,6 @@ struct MainView: View {
     }
 }
 
-struct MainView_Previews: PreviewProvider {
-    static var previews: some View {
-        let viewContext = PersistenceController.shared.container.viewContext
-        MainView()
-            .environment(\.managedObjectContext, viewContext)
-        //        AddCardForm()
-    }
-}
-
-
 // MARK: Credit Card Nav
 struct CreditCardView: View {
     
@@ -212,7 +257,7 @@ struct CreditCardView: View {
                                 }),
                                 .destructive(Text("Delete Card"), action: handleDelete), .cancel()])
                 }
-                            }
+            }
             
             
             HStack {
@@ -273,5 +318,14 @@ struct CreditCardView: View {
         .fullScreenCover(isPresented: $shouldShowEditForm) {
             AddCardForm(card: self.card)
         }
+    }
+}
+
+struct MainView_Previews: PreviewProvider {
+    static var previews: some View {
+        let viewContext = PersistenceController.shared.container.viewContext
+        MainView()
+            .environment(\.managedObjectContext, viewContext)
+        //        AddCardForm()
     }
 }
