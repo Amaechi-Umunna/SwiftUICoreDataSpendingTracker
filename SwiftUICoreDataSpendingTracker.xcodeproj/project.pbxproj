@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		584C3E1B296EBD2500C19303 /* TransactionsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 584C3E1A296EBD2500C19303 /* TransactionsListView.swift */; };
 		586008282941BE4400BCA7F7 /* SwiftUICoreDataSpendingTrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 586008272941BE4400BCA7F7 /* SwiftUICoreDataSpendingTrackerApp.swift */; };
 		5860082A2941BE4400BCA7F7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 586008292941BE4400BCA7F7 /* ContentView.swift */; };
 		5860082C2941BE4600BCA7F7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5860082B2941BE4600BCA7F7 /* Assets.xcassets */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		584C3E1A296EBD2500C19303 /* TransactionsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsListView.swift; sourceTree = "<group>"; };
 		586008242941BE4400BCA7F7 /* SwiftUICoreDataSpendingTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftUICoreDataSpendingTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		586008272941BE4400BCA7F7 /* SwiftUICoreDataSpendingTrackerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUICoreDataSpendingTrackerApp.swift; sourceTree = "<group>"; };
 		586008292941BE4400BCA7F7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -102,6 +104,7 @@
 			isa = PBXGroup;
 			children = (
 				58D2FD8E295FE499006A565C /* AddTransactionForm.swift */,
+				584C3E1A296EBD2500C19303 /* TransactionsListView.swift */,
 			);
 			path = Transaction;
 			sourceTree = "<group>";
@@ -181,6 +184,7 @@
 				5860083F2941FD2200BCA7F7 /* AddCardForm.swift in Sources */,
 				58D2FD8F295FE499006A565C /* AddTransactionForm.swift in Sources */,
 				5860082A2941BE4400BCA7F7 /* ContentView.swift in Sources */,
+				584C3E1B296EBD2500C19303 /* TransactionsListView.swift in Sources */,
 				5860083C2941BF6700BCA7F7 /* MainView.swift in Sources */,
 				586008282941BE4400BCA7F7 /* SwiftUICoreDataSpendingTrackerApp.swift in Sources */,
 			);

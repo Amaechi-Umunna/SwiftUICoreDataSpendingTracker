@@ -11,7 +11,7 @@ import SwiftUI
 struct MainView: View {
     
     @State private var shouldPresentAddCardForm = false
-    @State private var shouldShowAddTransactionForm = false
+    
     
     // Amount of credit card variable
     @Environment(\.managedObjectContext) private var viewContext
@@ -21,10 +21,6 @@ struct MainView: View {
         animation: .default)
     private var cards: FetchedResults<Card>
     
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \CardTransaction.timestamp, ascending: false)],
-        animation: .default)
-    private var transactions: FetchedResults<CardTransaction>
     
     var body: some View {
         NavigationView {
@@ -41,62 +37,9 @@ struct MainView: View {
                     .frame(height: 280)
                     .indexViewStyle(.page(backgroundDisplayMode: .always))
                     
-                    Text("Get Started by adding your first transaction")
                     
-                    Button {
-                        shouldShowAddTransactionForm.toggle()
-                    } label: {
-                        Text("+ Transaction")
-                            .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 14))
-                            .background(Color.black)
-                            .foregroundColor(Color(.systemBackground))
-                            .font(.headline)
-                            .cornerRadius(5)
-                    }
-                    .fullScreenCover(isPresented: $shouldShowAddTransactionForm) {
-                        AddTransactionForm()
-                    }
-                    ForEach(transactions) { transaction in
-                        
-                        VStack {
-                            HStack {
-                                VStack(alignment: .leading) {
-                                    Text(transaction.name ?? "")
-                                        .font(.headline)
-                                    if let date = transaction.timestamp {
-                                        Text(dateFormatter.string(from: date))
-                                    }
-                                    
-                                }
-                                Spacer()
-                                
-                                VStack(alignment: .trailing) {
-                                    Button  {
-                                        
-                                    } label: {
-                                        Image(systemName: "ellipsis")
-                                            .font(.system(size: 24))
-                                        
-                                    }.padding(EdgeInsets(top: 6, leading: 8, bottom: 4, trailing: 0))
-                                    
-                                    Text(String(format: "$%.2f",transaction.amount )) // Took off nil coalescing here *for future reference
-                                }
-                            }
-                            if let photoData = transaction.photoData,
-                               let uiImage = UIImage(data: photoData) {
-                                Image(uiImage: uiImage)
-                                    .resizable()
-                                    .scaledToFill()
-                            }
-                            
-                        }
-                        .foregroundColor(Color(.label))
-                        .padding()
-                        .background(Color.white)
-                        .cornerRadius(5)
-                        .shadow(radius: 5)
-                        .padding()
-                    }
+                    
+                    TransactionsListView()
                     
                 } else {
                     emptyPromptMessage
@@ -121,14 +64,7 @@ struct MainView: View {
         }
     }
     
-    // MARK: Date Formatter
     
-    private let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .short
-        formatter.timeStyle = .none
-        return formatter
-    }()
     
     // MARK: Empty Card Return Message
     private var emptyPromptMessage: some View {
